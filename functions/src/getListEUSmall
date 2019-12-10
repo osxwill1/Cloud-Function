@@ -1,0 +1,24 @@
+export const getListSmall = functions
+.region('europe-west1')
+.https.onRequest((request, response) => {
+    response.set('Access-Control-Allow-Origin', "*")
+    response.set('Access-Control-Allow-Methods', 'GET')
+    admin.firestore().collection('films').get()
+    .then(snapshot => {
+        snapshot.forEach(doc => {
+            const newelement = {
+                "gtin": doc.data().gtin,
+                "authors": doc.data().authors,
+                "title": doc.data().title,
+                "subtitle": doc.data().subtitle,
+                "thumbnails": doc.data().thumbnails
+            }
+           
+        })
+        response.send(snapshot.docs.map(doc => doc.data()))
+    })
+    .catch(error => {
+        console.log(error)
+        response.status(500).send(error)
+    } )
+})
